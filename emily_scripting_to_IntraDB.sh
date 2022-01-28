@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# Let's hardcode this for now.
-PROJECT="CCF_HCA_ITK"
-HOST="hcpi-dev-hodge3.nrg.wustl.edu"
-#ARCHIVE="/data/intradb/archive/$PROJ/arc001"
+#Naming Variables to Be Used in CURL call later
 
+PROJECT="CCF_HCA_ITK" #INTRADB PROJECT OF INTEREST
+HOST="hcpi-dev-hodge3.nrg.wustl.edu" #HOST WEBSITE TO COMMUNICATE WITH
+EXPERIMENT=$( cat ~/Downloads/LIST_OF_IDS_NEEDING_LINKED_DATA.txt ) #MAKING EXPERIMENT VARIABLE FROM A LIST OF FAILURES FROM INTRADB; CHANGE TO LOCATION OF LIST
+SEARCHPATH=/home/emily/Downloads/TESTSCANSUBDIR/ #DIRECTORY FILES TO BE UPLOADED ARE LOCATED
+
+
+#Check For/Get JSESSION ID
 while true; do
     case "$1" in
       --help | -h | -\?)
@@ -67,64 +71,36 @@ RENEW_JSESSION_ID () {
 RENEW_JSESSION_ID
 
 
-#MOVE FILEs THAT CONTAIN STRING IN FILE NAME TO NEW SUB-DIRECTORY
 
-EXPERIMENT=$( cat ~/Downloads/EA_TEST_ID2.txt )
+#MOVE FILEs THAT CONTAIN STRING WITH IDs OF INTEREST IN FILE NAME TO NEW SUB-DIRECTORY (so we only upload the files that we want NOT the entire archive)
 for key in $EXPERIMENT; do
  cp ~/Downloads/BOX\ TEST\ DOWNLOAD/*$key* ~/Downloads/TESTSCANSUBDIR/
 done
 
 
-#Update list so that it only includes IDs if we were able to find files of them
-
-
-
-
-##THIS IS MAKING EXPERIMENT VARIABLE I WANT FROM A LIST OF FAILURES FROM INTRADB... I CAN THEN CREATE A FOR LOOP BELOW
-#EXPERIMENT=$( cat ~/Downloads/SHORT_EA_TEST_ID2.txt )
-SEARCHPATH=/home/emily/Downloads/TESTSCANSUBDIR/ #DIRECTORY FILES ARE LOCATED
-#echo "THIS IS SEARCH PATH:"
-#echo "$SEARCHPATH"
 
 
 ## GET SERVER-SIDE CACHE SPACE PATH TO BE USED FOR THIS UPLOAD USING LOOP FOR EVERY SESSION ID IN EXPERIMENT
 for key in $EXPERIMENT; do
 
 #Make a subject variable (HCA#######) by removing _V*_* from experiment
-   #SUBJECT=$(sed -e "s/_V[0-9]_[A-Z][0-9]*//") #* specifies anything BEFORE astrix so need to give it examples of what to expect.   dot matches on anything  any number of any fields .*
-  #or
    SUBJECT=$(sed -e "s/_V[123]_[ABCX][0-9]*//" <<< $key) #Hodge recommends this one for clarity (see linux regular expressions)
-   #or
-   #SUBJECT=$(sed -e "s/_[A-Z0-9_]*//" <<< $key)
-   #or
-  #SUBJECT=$( sed 's/_V1_A//' <<< $key | sed 's/_V1_B//' | sed 's/_V2_A//' |sed 's/_V2_B//'| sed 's/_V1_X1//' | sed 's/_V2_X1//' )
+   
+#Check all variables called are correct (for first 'TEST' run only)
+  echo "$SUBJECT"
+  echo "$key"
+  echo "$HOST"
+  echo "$PROJECT"
 
-#Check all variables called are correct
-  #echo "$SUBJECT"
-  #echo "$key"
-  #echo "$HOST"
-  #echo "$PROJECT"
 
-#done
 
 #CURL Call to make BUILD PATH
-#NOTE: Echoing helps find source much faster. good to echo out statements so you have something you can run from command line to see if problem is curl statement or something else.
-#NOTE: in general will want to  need back slash () to make a command want ot excute a command that will produce a standard output that will get written out to variable
-  echo "curl -s --cookie JSESSIONID=$JSESSIONID -X POST \"https://$HOST/REST/services/import?import-handler=automation&project=$PROJECT&configuredResource=_CACHE_&subject=$SUBJECT&experiment=$key&returnUrlList=false&importFile=false&process=false\"| sed \"s/\/[^\/]*$//\""
-  BUILDPATH=`curl -s --cookie JSESSIONID=$JSESSIONID -X POST "https://$HOST/REST/services/import?import-handler=automation&project=$PROJECT&configuredResource=_CACHE_&subject=$SUBJECT&experiment=$key&returnUrlList=false&importFile=false&process=false"| sed "s/\/[^\/]*$//"`
+BUILDPATH=`curl -s --cookie JSESSIONID=$JSESSIONID -X POST "https://$HOST/REST/services/import?import-handler=automation&project=$PROJECT&configuredResource=_CACHE_&subject=$SUBJECT&experiment=$key&returnUrlList=false&importFile=false&process=false"| sed "s/\/[^\/]*$//"`
   echo "BUILDPATH=$BUILDPATH"
 
 
-#done
-
-
-
-##MAKE SURE UPLOAD ALL FILES FOR XX_V2_A BEFORE WE PROCESS, More likely to process correctly with the more files you give it.
-  ## UPLOAD EACH FILE TO CACHE SPACE
-
-#find $SEARCHPATH -type f -name '*.$key*.' -print0 | xargs -0 basename
-  #find $SEARCHPATH -type f -name "*$key*" -print0 | xargs -0 printf '%s\n'
-#find $SEARCHPATH -type f -name '*.HCA6154057*.' -print0 | xargs printf '%s/n'
+## UPLOAD EACH FILE TO CACHE SPACE 
+### This is a sub for loop so code will upload all files for 1 Experiment (HCA#######_V#_A/B) before processing. 
                    for FPATH in `find $SEARCHPATH -type f -name "*$key*" `; do  #Loop finds files only in our searchpath directory with the experiment name of interest in them
 
                                   FNAME=`basename $FPATH`
@@ -134,7 +110,7 @@ for key in $EXPERIMENT; do
                                   curl -s --cookie JSESSIONID=$JSESSIONID --data-binary @$FPATH -X POST "https://$HOST/REST/services/import/$FNAME?import-handler=automation&project=$PROJECT&configuredResource=_CACHE_&subject=$SUBJECT&experiment=$key&buildPath=$BUILDPATH&returnUrlList=false&extract=true&process=false&inbody=true&returnInbodyStatus=true&sendemail=true"
 
                               done
-                            #  echo "$key"
+                         
 
 
 
