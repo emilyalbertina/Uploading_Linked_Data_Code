@@ -25,7 +25,7 @@ box = LifespanBox(cache=box_temp)
 # In[ ]:
 
 
-# Functions that Need to Run to Pull Data
+# Defining Functions that Are Useful When Pulling Data
 def foldercontents(folder_id):
     print(folder_id)
     filelist=[]
