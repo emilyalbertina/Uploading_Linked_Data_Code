@@ -72,7 +72,8 @@ RENEW_JSESSION_ID
 
 
 
-#MOVE FILEs THAT CONTAIN STRING WITH IDs OF INTEREST IN FILE NAME TO NEW SUB-DIRECTORY (so we only upload the files that we want NOT the entire archive)
+#MOVE FILEs THAT CONTAIN STRING WITH IDs OF INTEREST (HCA#######_V#_A/B) IN FILE NAME TO NEW SUB-DIRECTORY 
+##(so we only process/upload the files that we want NOT the entire archive)
 for key in $EXPERIMENT; do
  cp ~/Downloads/BOX\ TEST\ DOWNLOAD/*$key* ~/Downloads/TESTSCANSUBDIR/
 done
@@ -84,7 +85,7 @@ done
 for key in $EXPERIMENT; do
 
 #Make a subject variable (HCA#######) by removing _V*_* from experiment
-   SUBJECT=$(sed -e "s/_V[123]_[ABCX][0-9]*//" <<< $key) #Hodge recommends this one for clarity (see linux regular expressions)
+   SUBJECT=$(sed -e "s/_V[123]_[ABCX][0-9]*//" <<< $key)
    
 #Check all variables called are correct (for first 'TEST' run only)
   echo "$SUBJECT"
