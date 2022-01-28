@@ -11,7 +11,7 @@ from boxsdk import JWTAuth, OAuth2, Client
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 default_cache = "/data/intradb/tmp/box2nda_cache"  #cache for data
 
-boxconfigfile="/home/emily/Downloads/BoxApp.json" #where configuration file is for Box on local computer
+boxconfigfile="~/BoxApp.json" #where configuration file is for Box on local computer, should change depending on where you are running the code
 
 #Making commands under a class to be called from main code
 class LifespanBox:
