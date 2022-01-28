@@ -36,7 +36,7 @@ def Download_Box_Files_in_Folder(folder_id):
     #Connect to Box Folder of Interest
     WUlist=box.client.folder(folder_id=folder_id).get_items(limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None)
     
-    #For loop bassically saying for every folder/file in x folder, put in relevantlist above (e.g., filelist[])
+    #For loop bassically saying for every sub-folder/file in folder X, put name/id in relevantlist above (e.g., filelist[])
     for item in WUlist:
         if item.type == 'file':
             filelist.append(item.name)
