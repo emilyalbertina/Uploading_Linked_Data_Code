@@ -22,47 +22,10 @@ box_temp='/home/emily/Downloads/EA_BoxTemp' #location of local copy of curated d
 box = LifespanBox(cache=box_temp)
 
 
-# In[ ]:
-
-
-# Defining Functions that Are Useful When Pulling Data
-def foldercontents(folder_id):
-    print(folder_id)
-    filelist=[]
-    fileidlist=[]
-    folderlist=[]
-    folderidlist=[]
-    WUlist=box.client.folder(folder_id=folder_id).get_items(limit=None, offset=0, marker=None, use_marker=False, sort=None, direction=None, fields=None)
-    for item in WUlist:
-        if item.type == 'file':
-            filelist.append(item.name)
-            fileidlist.append(item.id)
-        if item.type == 'folder':
-            folderlist.append(item.name)
-            folderidlist.append(item.id)
-    files=pd.DataFrame({'filename':filelist, 'file_id':fileidlist})
-    folders=pd.DataFrame({'foldername':folderlist, 'folder_id':folderidlist})
-    return files,folders
-
-
-def box2dataframe(fileid): #fileid is th efolder id
-    harvardfiles, harvardfolders = foldercontents(fileid)
-    return harvardfiles,harvardfolders
-    
-def folderlistcontents(folderslabels,folderslist): # will want to tweak so that it can go more than one layer in
-    bdasfilelist=pd.DataFrame()
-    bdasfolderlist=pd.DataFrame()
-    for i in range(len(folderslist)):
-        print('getting file and folder contents of box folder ' +folderslabels[i])
-        subfiles,subfolders=foldercontents(folderslist[i]) #foldercontents generates two dfs: a df with names and ids of files and a df with names and ids of folders
-        bdasfilelist=bdasfilelist.append(subfiles)
-        bdasfolderlist=bdasfolderlist.append(subfolders)
-    return bdasfilelist,bdasfolderlist
-
 
 # In[ ]:
 
-#Make a function that will download all files in one folder when given the folder id from box:
+#Define a function that will download all files in one folder when given the folder id from box:
 def Download_Box_Files_in_Folder(folder_id):
     #Make Empty lists to be populated with info
     filelist=[]
