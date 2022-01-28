@@ -48,9 +48,6 @@ def foldercontents(folder_id):
 def box2dataframe(fileid): #fileid is th efolder id
     harvardfiles, harvardfolders = foldercontents(fileid)
     return harvardfiles,harvardfolders
-   # data4process = harvardfiles.loc[~(harvardfiles.filename.str.upper().str.contains('SCORE') == True)]
-    #scores4process = harvardfiles.loc[harvardfiles.filename.str.upper().str.contains('SCORE') == True]
-    #box.download_files(data4process.file_id) #will give df of information instead of list
     
 def folderlistcontents(folderslabels,folderslist): # will want to tweak so that it can go more than one layer in
     bdasfilelist=pd.DataFrame()
