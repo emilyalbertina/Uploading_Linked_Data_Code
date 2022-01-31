@@ -5,6 +5,7 @@
 
 
 #Import needed Packages
+import time
 import os, datetime
 import pandas as pd
 import numpy as np
@@ -41,14 +42,13 @@ def Download_Box_Files_in_Folder(folder_id):
         if item.type == 'file':
             filelist.append(item.name)
             fileidlist.append(item.id)
-        if item.type == 'folder':
-            folderlist.append(item.name)
-            folderidlist.append(item.id)
-            
-            
-    #Download all files in filelist[] to designated directory
-    box.download_files(fileidlist, directory='/home/emily/Downloads/BOX TEST DOWNLOAD/', workers=20) #Should change directory to the directory we want the files to go to
-    
+            #Download all files in filelist[] to designated directory
+            box.download_files(fileidlist, directory='/home/emily/Downloads/BOX TEST DOWNLOAD/', workers=20) #Should change directory to the directory we want the files to go to
+            time.sleep(10)
+
+                
+       
+        
 
 
 # In[ ]:
