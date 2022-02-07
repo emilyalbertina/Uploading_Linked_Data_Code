@@ -134,7 +134,8 @@ class LifespanBox:
         file_path = os.path.join(self.cache, f.get().name)
 
         with open(file_path, 'wb') as out:
-            out.write(f.content())
+           # out.write(f.content())
+             f.download_to(out)
 
         return f
 
